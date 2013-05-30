@@ -15,9 +15,9 @@ app with us. You will need to enter a callback url, and this callback url is whe
 callback.php  
 
 3. As mentioned before, index.php just redirects to the stamp screen. The address of the stamp screen is
-https://beta.snowshoestamp.com/applications/client/<your app key here>/    If you are using our index.php, 
+https://beta.snowshoestamp.com/applications/client/&#60;your app key here&#62;/    If you are using our index.php, 
 you'll see a comment showing you where to put the app key. If you're linking to it from somewhere else,
-you can link to the above address, replacing <your app key> with the app key you can find on your Application
+you can link to the above address, replacing &#60;your app key&#62; with the app key you can find on your Application
 page on our site.
 
 4. Now open callback.php  You will see two comments telling you where to put your app key and app secret. 
