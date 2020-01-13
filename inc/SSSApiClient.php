@@ -1,41 +1,35 @@
 <?php
-include ('OAuthSimple.php');
 
 
 class SSSApiClient { 
-    protected $app_key = null;
-    protected $app_secret = null;
+    protected $api_key = null;
 
-    public function __construct($app_key, $app_secret) {
-        $this->app_key = $app_key;
-        $this->app_secret = $app_secret;
+    public function __construct($api_key) {
+        $this->api_key = $api_key;
     }
 
     public function processData($data) {
-        $data = array("data" => $data);
-        $app_key = $this->app_key;
-        $app_secret = $this->app_secret;
+        $api_key = $this->api_key;
 
-        $oauth = new OAuthSimple();
-        $result = $oauth->sign(
-            Array("path" => "http://beta.snowshoestamp.com/api/v2/stamp",
-                  "parameters" => $data,
-                  "action" => "POST",
-                  "signatures" => Array("consumer_key" => $app_key,
-                                        "shared_secret" => $app_secret)));
+        $curl = curl_init();
 
-        $header = $oauth->getHeaderString();
-        $ch = curl_init($result['signed_url']);
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://ss-dev-api-stamp.azurewebsites.net/v3/stamp",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => "data=$data",
+            CURLOPT_HTTPHEADER => array(
+              "SnowShoe-Api-Key: $api_key",
+              "Content-Type: application/x-www-form-urlencoded",
+              "Accept-Encoding: identity"
+            ),
+          ));
 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: ".$header));
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
 
-        $return = curl_exec($ch);
-        $curlError = curl_error($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $return = curl_exec($curl);
+        $curlError = curl_error($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
         return $return;
     }
